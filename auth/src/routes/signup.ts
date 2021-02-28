@@ -19,8 +19,7 @@ router.post(
     if (!validationErrors.isEmpty()) {
       throw new RequestValidationError(validationErrors.array());
     }
-
-    res.send({});
+    res.status(200).send({ message: 'User created' });
   }
 );
 

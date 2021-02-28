@@ -16,5 +16,5 @@ app.use(signoutRouter);
 app.use(errorHandler);
 
 app.listen(5000, () => {
-  console.log('Listen lslnflkon 5000');
+  console.log('Listen 5000');
 });

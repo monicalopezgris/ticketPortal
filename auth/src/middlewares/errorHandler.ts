@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { RequestValidationError } from '../errors/RequestValidationError';
+import { FormatedError } from '../errors/formatedError';
 
 export const errorHandler = (
   err: Error,
@@ -7,19 +7,8 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  // Error structure:
-  //   {
-  //     errors:{
-  //       message:String,
-  //       field?:string
-  //     }[]
-  //   }
-
-  if (err instanceof RequestValidationError) {
-    const formatedErrors = err.errors.map((error) => {
-      return { message: error.msg, field: error.param };
-    });
-    res.status(400).send({ errors: formatedErrors });
+  if (err instanceof FormatedError) {
+    res.status(err.statusCode).send({ errors: err.formatedErrors() });
   }
   res.status(400).send({ errors: [{ message: 'Something went wrong' }] });
 };
