@@ -18,3 +18,5 @@ deploy:
   kubectl:
     manifests:
     - infra/k8s/*
+
+    # ticketportal.dev
