@@ -1,11 +1,16 @@
 import { ValidationError } from "express-validator";
+import { CustomError } from "./customError";
 
-export class DatabaseConnectError extends Error {
+export class DatabaseConnectError extends CustomError {
   message = "Database error";
+  status = 500;
   constructor() {
     super();
-
-    //Mae the class work correctly after extending from Error
+    //Make the class work correctly after extending from Error
     Object.setPrototypeOf(this, DatabaseConnectError.prototype);
+  }
+
+  serializeError() {
+    return [{ message: this.message }];
   }
 }
