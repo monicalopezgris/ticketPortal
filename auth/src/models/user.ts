@@ -1,11 +1,11 @@
-import { Model, Schema, model } from "mongoose";
+import { Model, Document, Schema, model } from "mongoose";
 
 interface UserData {
   email: string;
   password: string;
 }
 
-interface UserDoc {
+interface UserDoc extends Document {
   email: string;
   password: string;
 }
