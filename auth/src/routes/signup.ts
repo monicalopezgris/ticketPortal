@@ -1,42 +1,53 @@
 import express, { Request, Response } from "express";
-import { body, validationResult } from "express-validator";
-import { ResultWithContext } from "express-validator/src/chain";
+import { body } from "express-validator";
+import jwt from "jsonwebtoken";
 import { BadRequestError } from "../errors/badRequestError";
-import { RequestValidationError } from "../errors/requestValidationError";
+import { validateRequest } from "../middlewares/validate-request";
+import bcrypt from "bcrypt";
+
 import { User } from "../models/user";
-import Bcrypt from "bcryptjs";
 
 const router = express.Router();
 
 router.post(
   "/api/users/signup",
   [
-    body("email").isEmail().withMessage("Email must be vaild"),
+    body("email").isEmail().withMessage("Email must be valid"),
     body("password")
       .trim()
-      .isLength({ min: 4, max: 16 })
-      .withMessage("Password must be vaild"),
+      .isLength({ min: 4, max: 20 })
+      .withMessage("Password must be between 4 and 20 characters"),
   ],
+  validateRequest,
   async (req: Request, res: Response) => {
-    const errors = validationResult(req);
+    const { email, password } = req.body;
 
-    if (!errors.isEmpty()) {
-      throw new RequestValidationError(errors.array());
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      throw new BadRequestError("Email in use");
     }
-    try {
-      let { email, password } = req.body;
-      const userExists = await User.findOne({ email });
-      if (userExists) {
-        throw new BadRequestError("User already exists");
-      }
-      password = Bcrypt.hashSync(password, 10);
-      const user = User.build({ email, password });
-      await user.save();
-      res.status(201).send(user);
-    } catch (error) {
-      throw new BadRequestError(error);
-    }
+    const user = User.build({ email, password });
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(user.password, salt);
+    user.save();
+
+    // Generate JWT
+    const userJwt = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+      },
+      // We check that JWT_KEY exists on the index.ts start function
+      process.env.JWT_KEY!
+    );
+
+    // Store it on session object
+    req.session = {
+      jwt: userJwt,
+    };
+
+    res.status(201).send(user);
   }
 );
-
 export { router as signupRouter };
