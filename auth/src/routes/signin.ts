@@ -35,12 +35,10 @@ router.post(
       // We check that JWT_KEY exists on the index.ts start function
       process.env.JWT_KEY!
     );
-    console.log("jwt:", userJwt);
     // Store it on session object
     req.session = {
       jwt: userJwt,
     };
-    console.log("session:", req.session);
     res.status(200).send(user);
   }
 );
