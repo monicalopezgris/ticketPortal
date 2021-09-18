@@ -1,10 +1,11 @@
 import express, { Request, Response } from "express";
-import { body } from "express-validator";
+import { body, validationResult } from "express-validator";
 import jwt from "jsonwebtoken";
 import { BadRequestError } from "../errors/badRequestError";
 import { validateRequest } from "../middlewares/validate-request";
 import { User } from "../models/user";
 import bcrypt from "bcrypt";
+import { RequestValidationError } from "../errors/requestValidationError";
 
 const router = express.Router();
 
@@ -18,6 +19,11 @@ router.post(
 
   async (req: Request, res: Response) => {
     const { email, password } = req.body;
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      throw new RequestValidationError(errors.array());
+    }
     const user = await User.findOne({ email });
     if (!user) {
       throw new BadRequestError("Credentials are not correct");
