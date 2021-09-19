@@ -1,11 +1,13 @@
 import express, { Request, Response } from "express";
 import { body, validationResult } from "express-validator";
 import jwt from "jsonwebtoken";
-import { BadRequestError } from "../errors/badRequestError";
-import { validateRequest } from "../middlewares/validate-request";
+import {
+  validateRequest,
+  RequestValidationError,
+  BadRequestError,
+} from "@ticketportalgr/common";
 import { User } from "../models/user";
 import bcrypt from "bcrypt";
-import { RequestValidationError } from "../errors/requestValidationError";
 
 const router = express.Router();
 

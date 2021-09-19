@@ -1,8 +1,7 @@
 import express, { Request, Response } from "express";
 import { body } from "express-validator";
 import jwt from "jsonwebtoken";
-import { BadRequestError } from "../errors/badRequestError";
-import { validateRequest } from "../middlewares/validate-request";
+import { validateRequest, BadRequestError } from "@ticketportalgr/common";
 import bcrypt from "bcrypt";
 
 import { User } from "../models/user";
