@@ -3,6 +3,7 @@ import "express-async-errors";
 import { json } from "body-parser";
 import cookieSession from "cookie-session";
 import { newTicketRouter } from "./routes/newTicket";
+import { NotFoundError } from "@ticketportalgr/common";
 
 const app = express();
 app.set("trust proxy", true);
@@ -18,7 +19,7 @@ app.use(
 app.use(newTicketRouter);
 
 app.all("*", async (req, res) => {
-  throw new NotFoundError("Not found");
+  throw new NotFoundError();
 });
 
 export { app };
