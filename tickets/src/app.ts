@@ -9,6 +9,9 @@ import {
 } from "@ticketportalgr/common";
 
 import { newTicketRouter } from "./routes/newTicket";
+import { getTicketRouter } from "./routes/getTicket";
+import { updateTicketRouter } from "./routes/updateTicket";
+import { getAllTicketRouter } from "./routes/getAllTicket";
 
 const app = express();
 app.set("trust proxy", true);
@@ -22,7 +25,10 @@ app.use(
 );
 app.use(currentUser);
 
+app.use(getTicketRouter);
 app.use(newTicketRouter);
+app.use(getAllTicketRouter);
+app.use(updateTicketRouter);
 
 app.all("*", (req, res) => {
   throw new NotFoundError();

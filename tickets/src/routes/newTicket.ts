@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
-import { body } from "express-validator";
 import { requireAuth, validateRequest } from "@ticketportalgr/common";
+import { body } from "express-validator";
+import { Ticket } from "../models/ticket";
 
 const router = express.Router();
 
@@ -16,8 +17,15 @@ router.post(
   ],
 
   validateRequest,
-  (req: Request, res: Response) => {
-    res.send({}).status(201);
+  async (req: Request, res: Response) => {
+    const { title, price } = req.body;
+    const ticket = await Ticket.build({
+      title,
+      price,
+      userId: req.currentUser!.id,
+    });
+    await ticket.save();
+    res.status(201).send(ticket);
   }
 );
 

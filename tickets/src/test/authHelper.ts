@@ -16,15 +16,19 @@ export const signup = async (): Promise<string[]> => {
   return cookie;
 };
 
-export const signin = (): string[] => {
+interface signinInterface {
+  userId?: string
+}
+export const signin = (userId = 'userId1'): string[] => {
   const user = {
+    id: userId,
     email: "test@test.dev",
     password: "password",
   };
   const token = jwt.sign(user, process.env.JWT_KEY!);
-
   const session = {jwt: token}
   const sessionJSON = JSON.stringify(session)
   const base64 = Buffer.from(sessionJSON).toString('base64')
+  
   return [`session=${base64}`]
 };
